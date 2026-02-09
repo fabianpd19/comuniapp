@@ -2,20 +2,21 @@ import React, { useState } from 'react'
 import { useAuth } from '../context/AuthContext'
 import { addDoc, collection, query, where, getDocs, serverTimestamp } from 'firebase/firestore'
 import { db } from '../services/firebase'
+import Modal from './Modal'
 
 export default function EmergencyButton() {
   const { user, profile, community } = useAuth()
   const [showConfirm, setShowConfirm] = useState(false)
+  const [showSuccess, setShowSuccess] = useState(false)
+  const [showError, setShowError] = useState(false)
+  const [errorMessage, setErrorMessage] = useState('')
   const [sending, setSending] = useState(false)
 
   // No mostrar si no hay comunidad o perfil
   if (!community || !profile || profile.role === 'pending') return null
 
   async function handleEmergency() {
-    if (!confirm('⚠️ ¿ACTIVAR EMERGENCIA?\n\nEsto alertará a TODOS los vecinos de tu comunidad.\n\nSolo usa esto en emergencias reales.')) {
-      return
-    }
-
+    setShowConfirm(false)
     setSending(true)
     try {
       // 1. Crear documento de emergencia
@@ -49,20 +50,59 @@ export default function EmergencyButton() {
         })
       }
 
-      alert('✅ Emergencia activada. Todos los vecinos han sido notificados.')
+      setSending(false)
+      setShowSuccess(true)
     } catch (err) {
       console.error('Error activando emergencia:', err)
-      alert('Error al activar emergencia: ' + err.message)
-    } finally {
+      setErrorMessage(err.message)
       setSending(false)
+      setShowError(true)
     }
   }
 
   return (
     <>
+      {/* Modal de confirmación */}
+      <Modal
+        isOpen={showConfirm}
+        onClose={() => setShowConfirm(false)}
+        onConfirm={handleEmergency}
+        type="warning"
+        title="¿ACTIVAR EMERGENCIA?"
+        message="Esto alertará a TODOS los vecinos de tu comunidad. Solo usa esto en emergencias reales."
+        confirmText="Activar Emergencia"
+        cancelText="Cancelar"
+      />
+
+      {/* Modal de éxito */}
+      <Modal
+        isOpen={showSuccess}
+        onClose={() => setShowSuccess(false)}
+        type="success"
+        title="Emergencia Activada"
+        message="Todos los vecinos han sido notificados. La ayuda está en camino."
+        confirmText="Entendido"
+        showCancel={false}
+      />
+
+      {/* Modal de error */}
+      <Modal
+        isOpen={showError}
+        onClose={() => setShowError(false)}
+        type="error"
+        title="Error"
+        message={`No se pudo activar la emergencia: ${errorMessage}`}
+        confirmText="Reintentar"
+        cancelText="Cerrar"
+        onConfirm={() => {
+          setShowError(false)
+          setShowConfirm(true)
+        }}
+      />
+
       {/* Botón flotante */}
       <button
-        onClick={handleEmergency}
+        onClick={() => setShowConfirm(true)}
         disabled={sending}
         style={{
           position: 'fixed',

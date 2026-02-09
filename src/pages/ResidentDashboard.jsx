@@ -51,124 +51,239 @@ export default function ResidentDashboard(){
   }
 
   return (
-    <div>
+    <div style={{minHeight:'100vh',background:'#f5f7fa'}}>
       <Navbar />
-      <div style={{padding:20,maxWidth:1000,margin:'0 auto'}}>
-        <h2>¡Hola, {profile?.displayName || 'Vecino'}!</h2>
+      <div className="container" style={{paddingTop:32,paddingBottom:48}}>
+        <div className="fade-in">
+          <h1 style={{color:'#2c3e50',fontSize:32,margin:'0 0 8px 0',fontWeight:700}}>
+            👋 ¡Hola, {profile?.displayName || 'Vecino'}!
+          </h1>
+          <p style={{color:'#7f8c8d',fontSize:16,margin:'0 0 32px 0'}}>
+            Bienvenido a tu comunidad
+          </p>
+        </div>
         
         {community ? (
-          <div>
+          <div className="fade-in">
             {/* Info de la comunidad */}
-            <div style={{background:'linear-gradient(135deg, #11998e 0%, #38ef7d 100%)',color:'white',padding:20,borderRadius:12,marginBottom:24}}>
-              <h3 style={{margin:'0 0 4px 0'}}>{community.name}</h3>
-              <p style={{margin:0,opacity:0.9}}>{community.description}</p>
+            <div className="card" style={{
+              background:'linear-gradient(135deg, #11998e 0%, #38ef7d 100%)',
+              color:'white',
+              padding:32,
+              marginBottom:32,
+              border:'none'
+            }}>
+              <div style={{display:'flex',alignItems:'center',gap:16}}>
+                <div style={{fontSize:48}}>🏘️</div>
+                <div>
+                  <h2 style={{margin:'0 0 4px 0',fontSize:28,fontWeight:700}}>{community.name}</h2>
+                  <p style={{margin:0,opacity:0.95,fontSize:16}}>{community.description}</p>
+                </div>
+              </div>
             </div>
 
             {/* Alertas activas */}
             {alerts.length > 0 && (
-              <div style={{marginBottom:24}}>
-                <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:12}}>
-                  <h3 style={{margin:0}}>🚨 Alertas activas</h3>
-                  <Link to="/resident/alerts" style={{fontSize:14,color:'#3498db'}}>Ver todas →</Link>
+              <div className="card" style={{marginBottom:32,border:'2px solid #e53e3e'}}>
+                <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:20}}>
+                  <h3 style={{margin:0,color:'#e53e3e',fontSize:20,fontWeight:700,display:'flex',alignItems:'center',gap:8}}>
+                    <span>🚨</span>
+                    <span>Alertas activas</span>
+                  </h3>
+                  <Link to="/resident/alerts" style={{fontSize:14,color:'#667eea',fontWeight:600,textDecoration:'none'}}>
+                    Ver todas →
+                  </Link>
                 </div>
-                {alerts.slice(0, 2).map(a => (
-                  <div key={a.id} style={{
-                    padding:16,
-                    marginBottom:8,
-                    borderRadius:8,
-                    background: a.level === 'alta' ? '#fdf2f2' : '#fffbeb',
-                    border: a.level === 'alta' ? '2px solid #c0392b' : '2px solid #f39c12'
-                  }}>
-                    <span style={{
-                      display:'inline-block',
-                      padding:'2px 8px',
-                      borderRadius:4,
-                      fontSize:11,
-                      fontWeight:'bold',
-                      marginBottom:8,
-                      background: a.level === 'alta' ? '#c0392b' : '#f39c12',
-                      color: 'white'
+                <div style={{display:'grid',gap:12}}>
+                  {alerts.slice(0, 2).map(a => (
+                    <div key={a.id} style={{
+                      padding:16,
+                      borderRadius:8,
+                      background: a.level === 'alta' ? '#fff5f5' : '#fffbf2',
+                      border: a.level === 'alta' ? '2px solid #e53e3e' : '2px solid #ed8936',
+                      display:'flex',
+                      alignItems:'start',
+                      gap:12
                     }}>
-                      {a.level === 'alta' ? '🔴 ALTA' : '🟡 MEDIA'}
-                    </span>
-                    <p style={{margin:0}}>{a.message}</p>
-                  </div>
-                ))}
+                      <div style={{fontSize:24,flexShrink:0}}>
+                        {a.level === 'alta' ? '🔴' : '🟡'}
+                      </div>
+                      <div style={{flex:1}}>
+                        <div style={{
+                          fontSize:11,
+                          fontWeight:'bold',
+                          color: a.level === 'alta' ? '#e53e3e' : '#ed8936',
+                          marginBottom:4,
+                          textTransform:'uppercase',
+                          letterSpacing:'0.5px'
+                        }}>
+                          {a.level === 'alta' ? 'PRIORIDAD ALTA' : 'PRIORIDAD MEDIA'}
+                        </div>
+                        <p style={{margin:0,color:'#2d3748',fontSize:15}}>{a.message}</p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
               </div>
             )}
 
             {/* Encuestas pendientes de votar */}
             {activeSurveys.length > 0 && (
-              <div style={{marginBottom:24}}>
-                <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:12}}>
-                  <h3 style={{margin:0}}>📊 Encuestas activas ({activeSurveys.length})</h3>
-                  <Link to="/resident/surveys" style={{fontSize:14,color:'#3498db'}}>Participar →</Link>
+              <div className="card" style={{marginBottom:32,border:'2px solid #4facfe'}}>
+                <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:16}}>
+                  <h3 style={{margin:0,color:'#2c3e50',fontSize:20,fontWeight:700,display:'flex',alignItems:'center',gap:8}}>
+                    <span>📊</span>
+                    <span>Encuestas activas ({activeSurveys.length})</span>
+                  </h3>
+                  <Link to="/resident/surveys" style={{fontSize:14,color:'#667eea',fontWeight:600,textDecoration:'none'}}>
+                    Participar →
+                  </Link>
                 </div>
-                <div style={{background:'#e8f4fd',padding:16,borderRadius:8,border:'1px solid #3498db'}}>
-                  <p style={{margin:0}}>Hay {activeSurveys.length} encuesta{activeSurveys.length > 1 ? 's' : ''} esperando tu voto.</p>
+                <div style={{
+                  background:'linear-gradient(135deg, #e0f7fa 0%, #e1f5fe 100%)',
+                  padding:20,
+                  borderRadius:8
+                }}>
+                  <p style={{margin:'0 0 16px 0',color:'#2c3e50',fontSize:15}}>
+                    🗳️ Hay {activeSurveys.length} encuesta{activeSurveys.length > 1 ? 's' : ''} esperando tu voto
+                  </p>
                   <Link 
                     to="/resident/surveys" 
-                    style={{display:'inline-block',marginTop:12,padding:'8px 16px',background:'#3498db',color:'white',borderRadius:4,textDecoration:'none'}}
+                    style={{textDecoration:'none'}}
                   >
-                    Votar ahora
+                    <button style={{
+                      padding:'12px 24px',
+                      background:'linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)',
+                      color:'white',
+                      borderRadius:8,
+                      fontSize:15
+                    }}>
+                      📊 Votar ahora
+                    </button>
                   </Link>
                 </div>
               </div>
             )}
 
             {/* Avisos recientes */}
-            <div style={{marginBottom:24}}>
-              <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:12}}>
-                <h3 style={{margin:0}}>📢 Avisos recientes</h3>
-                <Link to="/resident/posts" style={{fontSize:14,color:'#3498db'}}>Ver todos →</Link>
+            <div className="card" style={{marginBottom:32}}>
+              <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:20}}>
+                <h3 style={{margin:0,color:'#2c3e50',fontSize:20,fontWeight:700,display:'flex',alignItems:'center',gap:8}}>
+                  <span>📢</span>
+                  <span>Avisos recientes</span>
+                </h3>
+                <Link to="/resident/posts" style={{fontSize:14,color:'#667eea',fontWeight:600,textDecoration:'none'}}>
+                  Ver todos →
+                </Link>
               </div>
               {recentPosts.length === 0 ? (
-                <p style={{color:'#666'}}>No hay avisos recientes.</p>
+                <p style={{color:'#95a5a6',textAlign:'center',padding:20}}>No hay avisos recientes</p>
               ) : (
-                recentPosts.map(p => (
-                  <div key={p.id} style={{
-                    padding:16,
-                    marginBottom:8,
-                    borderRadius:8,
-                    background:'white',
-                    border: p.priority === 'urgente' ? '2px solid #e74c3c' : '1px solid #ddd'
-                  }}>
-                    <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:8}}>
-                      <span style={{fontSize:12,color:'#666'}}>{categoryLabels[p.category] || p.category}</span>
-                      {p.priority === 'urgente' && (
-                        <span style={{background:'#e74c3c',color:'white',padding:'2px 8px',borderRadius:4,fontSize:11}}>URGENTE</span>
-                      )}
+                <div style={{display:'grid',gap:12}}>
+                  {recentPosts.map(p => (
+                    <div key={p.id} style={{
+                      padding:16,
+                      borderRadius:8,
+                      background:'#f8f9fa',
+                      border: p.priority === 'urgente' ? '2px solid #e53e3e' : '1px solid #e1e8ed',
+                      transition:'all 0.3s ease'
+                    }}>
+                      <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:8}}>
+                        <span style={{fontSize:13,color:'#7f8c8d',fontWeight:600}}>
+                          {categoryLabels[p.category] || p.category}
+                        </span>
+                        {p.priority === 'urgente' && (
+                          <span style={{
+                            background:'linear-gradient(135deg, #eb3349 0%, #f45c43 100%)',
+                            color:'white',
+                            padding:'4px 12px',
+                            borderRadius:20,
+                            fontSize:11,
+                            fontWeight:'bold'
+                          }}>
+                            ⚠️ URGENTE
+                          </span>
+                        )}
+                      </div>
+                      <h4 style={{margin:'0 0 8px 0',color:'#2c3e50',fontSize:16}}>{p.title}</h4>
+                      <p style={{margin:0,color:'#7f8c8d',fontSize:14,lineHeight:1.5}}>
+                        {p.content?.substring(0, 100)}{p.content?.length > 100 ? '...' : ''}
+                      </p>
                     </div>
-                    <h4 style={{margin:'0 0 4px 0'}}>{p.title}</h4>
-                    <p style={{margin:0,color:'#666',fontSize:14}}>{p.content?.substring(0, 100)}{p.content?.length > 100 ? '...' : ''}</p>
-                  </div>
-                ))
+                  ))}
+                </div>
               )}
             </div>
 
             {/* Accesos rápidos */}
-            <div style={{display:'grid',gridTemplateColumns:'repeat(auto-fit, minmax(150px, 1fr))',gap:12}}>
-              <Link to="/resident/posts" style={{padding:20,background:'#27ae60',color:'white',borderRadius:8,textDecoration:'none',textAlign:'center'}}>
-                📢 Avisos
-              </Link>
-              <Link to="/resident/alerts" style={{padding:20,background:'#e74c3c',color:'white',borderRadius:8,textDecoration:'none',textAlign:'center'}}>
-                🚨 Alertas
-              </Link>
-              <Link to="/resident/surveys" style={{padding:20,background:'#3498db',color:'white',borderRadius:8,textDecoration:'none',textAlign:'center'}}>
-                📊 Encuestas
-              </Link>
-              <Link to="/resident/community" style={{padding:20,background:'#9b59b6',color:'white',borderRadius:8,textDecoration:'none',textAlign:'center'}}>
-                👥 Comunidad
-              </Link>
+            <div className="card">
+              <h3 style={{margin:'0 0 20px 0',color:'#2c3e50',fontSize:20,fontWeight:700}}>
+                ⚡ Accesos rápidos
+              </h3>
+              <div style={{display:'grid',gridTemplateColumns:'repeat(auto-fit, minmax(150px, 1fr))',gap:16}}>
+                <Link to="/resident/posts" style={{textDecoration:'none'}}>
+                  <div style={{
+                    padding:24,
+                    background:'linear-gradient(135deg, #11998e 0%, #38ef7d 100%)',
+                    color:'white',
+                    borderRadius:12,
+                    textAlign:'center',
+                    transition:'all 0.3s ease'
+                  }}>
+                    <div style={{fontSize:32,marginBottom:8}}>📢</div>
+                    <div style={{fontWeight:600}}>Avisos</div>
+                  </div>
+                </Link>
+                <Link to="/resident/alerts" style={{textDecoration:'none'}}>
+                  <div style={{
+                    padding:24,
+                    background:'linear-gradient(135deg, #eb3349 0%, #f45c43 100%)',
+                    color:'white',
+                    borderRadius:12,
+                    textAlign:'center',
+                    transition:'all 0.3s ease'
+                  }}>
+                    <div style={{fontSize:32,marginBottom:8}}>🚨</div>
+                    <div style={{fontWeight:600}}>Alertas</div>
+                  </div>
+                </Link>
+                <Link to="/resident/surveys" style={{textDecoration:'none'}}>
+                  <div style={{
+                    padding:24,
+                    background:'linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)',
+                    color:'white',
+                    borderRadius:12,
+                    textAlign:'center',
+                    transition:'all 0.3s ease'
+                  }}>
+                    <div style={{fontSize:32,marginBottom:8}}>📊</div>
+                    <div style={{fontWeight:600}}>Encuestas</div>
+                  </div>
+                </Link>
+                <Link to="/resident/community" style={{textDecoration:'none'}}>
+                  <div style={{
+                    padding:24,
+                    background:'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+                    color:'white',
+                    borderRadius:12,
+                    textAlign:'center',
+                    transition:'all 0.3s ease'
+                  }}>
+                    <div style={{fontSize:32,marginBottom:8}}>👥</div>
+                    <div style={{fontWeight:600}}>Comunidad</div>
+                  </div>
+                </Link>
+              </div>
             </div>
 
             {/* Funciones Premium */}
-            {!community?.isPremium && <PremiumFeaturesSection />}
+            {!community?.isPremium && <div style={{marginTop:32}}><PremiumFeaturesSection /></div>}
           </div>
         ) : (
-          <div style={{textAlign:'center',padding:40}}>
-            <p style={{color:'#666'}}>No estás asignado a ninguna comunidad.</p>
-            <p style={{fontSize:14,color:'#999'}}>Tu solicitud puede estar pendiente de aprobación.</p>
+          <div className="card" style={{textAlign:'center',padding:60}}>
+            <div style={{fontSize:64,marginBottom:16}}>🏘️</div>
+            <p style={{color:'#7f8c8d',fontSize:18,margin:'0 0 8px 0'}}>No estás asignado a ninguna comunidad</p>
+            <p style={{fontSize:14,color:'#bdc3c7',margin:0}}>Tu solicitud puede estar pendiente de aprobación</p>
           </div>
         )}
       </div>

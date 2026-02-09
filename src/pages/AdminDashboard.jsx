@@ -45,79 +45,201 @@ export default function AdminDashboard(){
   }
 
   return (
-    <div>
+    <div style={{minHeight:'100vh',background:'#f5f7fa'}}>
       <Navbar />
-      <div style={{padding:20,maxWidth:1000,margin:'0 auto'}}>
-        <h2>Panel de Administrador</h2>
+      <div className="container" style={{paddingTop:32,paddingBottom:48}}>
+        <div className="fade-in">
+          <h1 style={{color:'#2c3e50',fontSize:32,margin:'0 0 8px 0',fontWeight:700}}>
+            👨‍💼 Panel de Administrador
+          </h1>
+          <p style={{color:'#7f8c8d',fontSize:16,margin:'0 0 32px 0'}}>
+            Gestiona tu comunidad de manera eficiente
+          </p>
+        </div>
         
         {community ? (
-          <div>
+          <div className="fade-in">
             {/* Info de la comunidad */}
-            <div style={{background:'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',color:'white',padding:24,borderRadius:12,marginBottom:24}}>
-              <h3 style={{margin:'0 0 8px 0',fontSize:24}}>{community.name}</h3>
-              <p style={{margin:'4px 0',opacity:0.9}}>{community.description}</p>
-              <p style={{margin:'4px 0',opacity:0.8}}>📍 {community.address}</p>
-              <p style={{margin:'8px 0 0 0',fontWeight:'bold'}}>👥 {community.totalMembers || community.members?.length || 0} miembros</p>
+            <div className="card" style={{
+              background:'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+              color:'white',
+              padding:32,
+              marginBottom:32,
+              border:'none'
+            }}>
+              <div style={{display:'flex',alignItems:'center',gap:16,marginBottom:16}}>
+                <div style={{fontSize:48}}>🏘️</div>
+                <div>
+                  <h2 style={{margin:'0 0 8px 0',fontSize:28,fontWeight:700}}>{community.name}</h2>
+                  <p style={{margin:0,opacity:0.95,fontSize:16}}>{community.description}</p>
+                </div>
+              </div>
+              <div style={{display:'flex',gap:24,marginTop:20,flexWrap:'wrap'}}>
+                <div style={{display:'flex',alignItems:'center',gap:8}}>
+                  <span style={{fontSize:20}}>📍</span>
+                  <span style={{opacity:0.9}}>{community.address}</span>
+                </div>
+                <div style={{display:'flex',alignItems:'center',gap:8}}>
+                  <span style={{fontSize:20}}>👥</span>
+                  <span style={{fontWeight:'bold'}}>{community.totalMembers || community.members?.length || 0} miembros</span>
+                </div>
+              </div>
             </div>
 
             {/* Tarjetas de estadísticas */}
-            <div style={{display:'grid',gridTemplateColumns:'repeat(auto-fit, minmax(200px, 1fr))',gap:16,marginBottom:24}}>
+            <div style={{display:'grid',gridTemplateColumns:'repeat(auto-fit, minmax(220px, 1fr))',gap:20,marginBottom:32}}>
               <Link to="/admin/posts" style={{textDecoration:'none'}}>
-                <div style={{background:'#27ae60',color:'white',padding:20,borderRadius:8,textAlign:'center'}}>
-                  <div style={{fontSize:32,fontWeight:'bold'}}>{stats.posts}</div>
-                  <div>📢 Avisos</div>
+                <div className="card" style={{
+                  background:'linear-gradient(135deg, #11998e 0%, #38ef7d 100%)',
+                  color:'white',
+                  padding:24,
+                  border:'none',
+                  textAlign:'center',
+                  transition:'all 0.3s ease'
+                }}>
+                  <div style={{fontSize:48,marginBottom:12}}>📢</div>
+                  <div style={{fontSize:36,fontWeight:'bold',marginBottom:4}}>{stats.posts}</div>
+                  <div style={{fontSize:15,opacity:0.9}}>Avisos publicados</div>
                 </div>
               </Link>
               <Link to="/admin/alerts" style={{textDecoration:'none'}}>
-                <div style={{background:'#e74c3c',color:'white',padding:20,borderRadius:8,textAlign:'center'}}>
-                  <div style={{fontSize:32,fontWeight:'bold'}}>{stats.alerts}</div>
-                  <div>🚨 Alertas</div>
+                <div className="card" style={{
+                  background:'linear-gradient(135deg, #eb3349 0%, #f45c43 100%)',
+                  color:'white',
+                  padding:24,
+                  border:'none',
+                  textAlign:'center',
+                  transition:'all 0.3s ease'
+                }}>
+                  <div style={{fontSize:48,marginBottom:12}}>🚨</div>
+                  <div style={{fontSize:36,fontWeight:'bold',marginBottom:4}}>{stats.alerts}</div>
+                  <div style={{fontSize:15,opacity:0.9}}>Alertas activas</div>
                 </div>
               </Link>
               <Link to="/admin/surveys" style={{textDecoration:'none'}}>
-                <div style={{background:'#3498db',color:'white',padding:20,borderRadius:8,textAlign:'center'}}>
-                  <div style={{fontSize:32,fontWeight:'bold'}}>{stats.surveys}</div>
-                  <div>📊 Encuestas activas</div>
+                <div className="card" style={{
+                  background:'linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)',
+                  color:'white',
+                  padding:24,
+                  border:'none',
+                  textAlign:'center',
+                  transition:'all 0.3s ease'
+                }}>
+                  <div style={{fontSize:48,marginBottom:12}}>📊</div>
+                  <div style={{fontSize:36,fontWeight:'bold',marginBottom:4}}>{stats.surveys}</div>
+                  <div style={{fontSize:15,opacity:0.9}}>Encuestas activas</div>
                 </div>
               </Link>
               <Link to="/admin/community" style={{textDecoration:'none'}}>
-                <div style={{background: stats.pendingRequests > 0 ? '#f39c12' : '#95a5a6',color:'white',padding:20,borderRadius:8,textAlign:'center'}}>
-                  <div style={{fontSize:32,fontWeight:'bold'}}>{stats.pendingRequests}</div>
-                  <div>⏳ Solicitudes pendientes</div>
+                <div className="card" style={{
+                  background: stats.pendingRequests > 0 
+                    ? 'linear-gradient(135deg, #f093fb 0%, #f5576c 100%)' 
+                    : 'linear-gradient(135deg, #a8a8a8 0%, #7f7f7f 100%)',
+                  color:'white',
+                  padding:24,
+                  border:'none',
+                  textAlign:'center',
+                  transition:'all 0.3s ease'
+                }}>
+                  <div style={{fontSize:48,marginBottom:12}}>⏳</div>
+                  <div style={{fontSize:36,fontWeight:'bold',marginBottom:4}}>{stats.pendingRequests}</div>
+                  <div style={{fontSize:15,opacity:0.9}}>Solicitudes pendientes</div>
                 </div>
               </Link>
             </div>
 
             {/* Alertas recientes */}
             {recentAlerts.length > 0 && (
-              <div style={{marginBottom:24}}>
-                <h4>Alertas recientes</h4>
-                {recentAlerts.map(a => (
-                  <div key={a.id} style={{
-                    padding:12,
-                    marginBottom:8,
-                    borderRadius:4,
-                    background: a.level === 'alta' ? '#fdf2f2' : '#fffbeb',
-                    border: a.level === 'alta' ? '1px solid #c0392b' : '1px solid #f39c12'
-                  }}>
-                    <span style={{fontWeight:'bold'}}>{a.level === 'alta' ? '🔴' : '🟡'}</span> {a.message}
-                  </div>
-                ))}
+              <div className="card" style={{marginBottom:32}}>
+                <h3 style={{margin:'0 0 20px 0',color:'#2c3e50',fontSize:20,fontWeight:700}}>
+                  🚨 Alertas recientes
+                </h3>
+                <div style={{display:'grid',gap:12}}>
+                  {recentAlerts.map(a => (
+                    <div key={a.id} style={{
+                      padding:16,
+                      borderRadius:8,
+                      background: a.level === 'alta' ? '#fff5f5' : '#fffbf2',
+                      border: a.level === 'alta' ? '2px solid #e53e3e' : '2px solid #ed8936',
+                      display:'flex',
+                      alignItems:'start',
+                      gap:12
+                    }}>
+                      <div style={{
+                        fontSize:24,
+                        flexShrink:0
+                      }}>
+                        {a.level === 'alta' ? '🔴' : '🟡'}
+                      </div>
+                      <div style={{flex:1}}>
+                        <div style={{
+                          fontSize:11,
+                          fontWeight:'bold',
+                          color: a.level === 'alta' ? '#e53e3e' : '#ed8936',
+                          marginBottom:4,
+                          textTransform:'uppercase',
+                          letterSpacing:'0.5px'
+                        }}>
+                          {a.level === 'alta' ? 'PRIORIDAD ALTA' : 'PRIORIDAD MEDIA'}
+                        </div>
+                        <p style={{margin:0,color:'#2d3748',fontSize:15}}>{a.message}</p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
               </div>
             )}
 
             {/* Acciones rápidas */}
-            <div>
-              <h4>Acciones rápidas</h4>
+            <div className="card" style={{marginBottom:32}}>
+              <h3 style={{margin:'0 0 20px 0',color:'#2c3e50',fontSize:20,fontWeight:700}}>
+                ⚡ Acciones rápidas
+              </h3>
               <div style={{display:'flex',gap:12,flexWrap:'wrap'}}>
-                <Link to="/admin/posts" style={{padding:'10px 20px',background:'#27ae60',color:'white',borderRadius:4,textDecoration:'none'}}>
-                  + Nuevo aviso
+                <Link to="/admin/posts" style={{textDecoration:'none'}}>
+                  <button style={{
+                    padding:'12px 24px',
+                    background:'linear-gradient(135deg, #11998e 0%, #38ef7d 100%)',
+                    color:'white',
+                    borderRadius:8,
+                    display:'flex',
+                    alignItems:'center',
+                    gap:8,
+                    fontSize:15
+                  }}>
+                    <span>📢</span>
+                    <span>Nuevo aviso</span>
+                  </button>
                 </Link>
-                <Link to="/admin/alerts" style={{padding:'10px 20px',background:'#e74c3c',color:'white',borderRadius:4,textDecoration:'none'}}>
-                  + Nueva alerta
+                <Link to="/admin/alerts" style={{textDecoration:'none'}}>
+                  <button style={{
+                    padding:'12px 24px',
+                    background:'linear-gradient(135deg, #eb3349 0%, #f45c43 100%)',
+                    color:'white',
+                    borderRadius:8,
+                    display:'flex',
+                    alignItems:'center',
+                    gap:8,
+                    fontSize:15
+                  }}>
+                    <span>🚨</span>
+                    <span>Nueva alerta</span>
+                  </button>
                 </Link>
-                <Link to="/admin/surveys" style={{padding:'10px 20px',background:'#3498db',color:'white',borderRadius:4,textDecoration:'none'}}>
-                  + Nueva encuesta
+                <Link to="/admin/surveys" style={{textDecoration:'none'}}>
+                  <button style={{
+                    padding:'12px 24px',
+                    background:'linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)',
+                    color:'white',
+                    borderRadius:8,
+                    display:'flex',
+                    alignItems:'center',
+                    gap:8,
+                    fontSize:15
+                  }}>
+                    <span>📊</span>
+                    <span>Nueva encuesta</span>
+                  </button>
                 </Link>
               </div>
             </div>
@@ -126,9 +248,10 @@ export default function AdminDashboard(){
             {!community?.isPremium && <PremiumFeaturesSection />}
           </div>
         ) : (
-          <div style={{textAlign:'center',padding:40}}>
-            <p style={{color:'#666'}}>No estás asignado a ninguna comunidad.</p>
-            <p style={{fontSize:14,color:'#999'}}>Contacta al Super Administrador para que te asigne una comunidad.</p>
+          <div className="card" style={{textAlign:'center',padding:60}}>
+            <div style={{fontSize:64,marginBottom:16}}>🏘️</div>
+            <p style={{color:'#7f8c8d',fontSize:18,margin:'0 0 8px 0'}}>No estás asignado a ninguna comunidad</p>
+            <p style={{fontSize:14,color:'#bdc3c7',margin:0}}>Contacta al Super Administrador para que te asigne una comunidad</p>
           </div>
         )}
       </div>

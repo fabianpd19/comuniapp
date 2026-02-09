@@ -78,61 +78,140 @@ export default function Register() {
     }
   }
 
-  if (loading) return <div style={{padding:20}}>Cargando...</div>
+  if (loading) {
+    return (
+      <div style={{
+        minHeight: '100vh',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        background: 'linear-gradient(135deg, #11998e 0%, #38ef7d 100%)'
+      }}>
+        <div style={{color:'white',fontSize:18,textAlign:'center'}}>
+          <div className="pulse" style={{fontSize:48,marginBottom:16}}>🏘️</div>
+          <p>Cargando...</p>
+        </div>
+      </div>
+    )
+  }
 
   return (
-    <div style={{padding:20,maxWidth:400,margin:'40px auto'}}>
-      <h2>Crear cuenta</h2>
-      <form onSubmit={handleSubmit} style={{display:'grid',gap:12}}>
-        <input 
-          placeholder="Nombre completo *" 
-          value={displayName} 
-          onChange={e=>setDisplayName(e.target.value)} 
-          disabled={isRegistering}
-          style={{padding:10,fontSize:16}}
-        />
-        <input 
-          placeholder="Email *" 
-          type="email"
-          value={email} 
-          onChange={e=>setEmail(e.target.value)} 
-          disabled={isRegistering}
-          style={{padding:10,fontSize:16}}
-        />
-        <input 
-          placeholder="Apartamento / Unidad (opcional)" 
-          value={apartment} 
-          onChange={e=>setApartment(e.target.value)} 
-          disabled={isRegistering}
-          style={{padding:10,fontSize:16}}
-        />
-        <input 
-          placeholder="Contraseña *" 
-          type="password" 
-          value={password} 
-          onChange={e=>setPassword(e.target.value)} 
-          disabled={isRegistering}
-          style={{padding:10,fontSize:16}}
-        />
-        <input 
-          placeholder="Confirmar contraseña *" 
-          type="password" 
-          value={confirmPassword} 
-          onChange={e=>setConfirmPassword(e.target.value)} 
-          disabled={isRegistering}
-          style={{padding:10,fontSize:16}}
-        />
-        <button type="submit" disabled={isRegistering} style={{padding:12,fontSize:16}}>
-          {isRegistering ? 'Registrando...' : 'Registrarse'}
-        </button>
-        {error && <div style={{color:'red',padding:8,background:'#fee',borderRadius:4}}>{error}</div>}
-      </form>
-      <p style={{marginTop:16,textAlign:'center'}}>
-        ¿Ya tienes cuenta? <Link to="/login">Iniciar sesión</Link>
-      </p>
-      <p style={{marginTop:12,fontSize:12,color:'#666',textAlign:'center'}}>
-        Al registrarte, tu cuenta quedará pendiente de aprobación por un administrador de comunidad.
-      </p>
+    <div style={{
+      minHeight: '100vh',
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      background: 'linear-gradient(135deg, #11998e 0%, #38ef7d 100%)',
+      padding: 20
+    }}>
+      <div className="card fade-in" style={{
+        maxWidth: 480,
+        width: '100%',
+        boxShadow: '0 20px 60px rgba(0,0,0,0.3)'
+      }}>
+        <div style={{textAlign:'center',marginBottom:32}}>
+          <div style={{fontSize:64,marginBottom:16}}>👥</div>
+          <h2 style={{margin:0,color:'#2c3e50',fontSize:28}}>Únete a ComuniApp</h2>
+          <p style={{color:'#666',margin:'8px 0 0 0'}}>Crea tu cuenta en segundos</p>
+        </div>
+        
+        <form onSubmit={handleSubmit} style={{display:'flex',flexDirection:'column',gap:18}}>
+          <div>
+            <label style={{display:'block',marginBottom:8,color:'#2c3e50',fontWeight:600,fontSize:14}}>👤 Nombre completo</label>
+            <input 
+              placeholder="Juan Pérez" 
+              value={displayName} 
+              onChange={e=>setDisplayName(e.target.value)} 
+              disabled={isRegistering}
+            />
+          </div>
+          
+          <div>
+            <label style={{display:'block',marginBottom:8,color:'#2c3e50',fontWeight:600,fontSize:14}}>📧 Correo electrónico</label>
+            <input 
+              placeholder="tu@email.com" 
+              type="email"
+              value={email} 
+              onChange={e=>setEmail(e.target.value)} 
+              disabled={isRegistering}
+            />
+          </div>
+          
+          <div>
+            <label style={{display:'block',marginBottom:8,color:'#2c3e50',fontWeight:600,fontSize:14}}>🏠 Apartamento / Unidad <span style={{color:'#999',fontWeight:400}}>(opcional)</span></label>
+            <input 
+              placeholder="Apt. 304" 
+              value={apartment} 
+              onChange={e=>setApartment(e.target.value)} 
+              disabled={isRegistering}
+            />
+          </div>
+          
+          <div>
+            <label style={{display:'block',marginBottom:8,color:'#2c3e50',fontWeight:600,fontSize:14}}>🔒 Contraseña</label>
+            <input 
+              placeholder="Mínimo 6 caracteres" 
+              type="password" 
+              value={password} 
+              onChange={e=>setPassword(e.target.value)} 
+              disabled={isRegistering}
+            />
+          </div>
+          
+          <div>
+            <label style={{display:'block',marginBottom:8,color:'#2c3e50',fontWeight:600,fontSize:14}}>🔒 Confirmar contraseña</label>
+            <input 
+              placeholder="Repite tu contraseña" 
+              type="password" 
+              value={confirmPassword} 
+              onChange={e=>setConfirmPassword(e.target.value)} 
+              disabled={isRegistering}
+            />
+          </div>
+          
+          <button 
+            type="submit" 
+            disabled={isRegistering} 
+            style={{
+              background: 'linear-gradient(135deg, #11998e 0%, #38ef7d 100%)',
+              color: 'white',
+              padding: '14px',
+              marginTop: 8,
+              fontSize: 16,
+              fontWeight: 600
+            }}
+          >
+            {isRegistering ? '⏳ Registrando...' : '🚀 Crear cuenta'}
+          </button>
+          
+          {error && (
+            <div style={{
+              color:'#e74c3c',
+              padding:12,
+              background:'#fee',
+              borderRadius:8,
+              border:'1px solid #e74c3c',
+              fontSize:14
+            }}>
+              ⚠️ {error}
+            </div>
+          )}
+        </form>
+        
+        <div style={{
+          marginTop:24,
+          paddingTop:24,
+          borderTop:'1px solid #e1e8ed',
+          textAlign:'center'
+        }}>
+          <p style={{color:'#666',margin:'0 0 12px 0'}}>
+            ¿Ya tienes cuenta? <Link to="/login" style={{color:'#11998e',fontWeight:600,textDecoration:'none'}}>Inicia sesión aquí</Link>
+          </p>
+          <p style={{fontSize:12,color:'#999',margin:0}}>
+            Tu cuenta quedará pendiente de aprobación por un administrador
+          </p>
+        </div>
+      </div>
     </div>
   )
 }

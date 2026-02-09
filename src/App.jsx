@@ -18,16 +18,21 @@ import ResidentRoute from './components/ResidentRoute'
 import SuperAdminRoute from './components/SuperAdminRoute'
 import EmergencyButton from './components/EmergencyButton'
 import EmergencyBanner from './components/EmergencyBanner'
+import Loader from './components/Loader'
+import Navbar from './components/Navbar'
 
 export default function App() {
   const { loading, profile } = useAuth()
-  if (loading) return <div style={{padding:20}}>Cargando...</div>
+  if (loading) return <Loader />
 
   // Mostrar botón y banner solo para usuarios autenticados con comunidad
   const showEmergencyFeatures = profile && profile.role !== 'pending' && profile.role !== 'superadmin'
 
   return (
     <>
+      {/* Navbar - mostrar solo si el usuario está autenticado */}
+      {profile && <Navbar />}
+      
       {/* Banner de emergencia global */}
       {showEmergencyFeatures && <EmergencyBanner />}
       

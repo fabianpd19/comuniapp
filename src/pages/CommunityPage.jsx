@@ -103,81 +103,101 @@ export default function CommunityPage(){
   }
 
   return (
-    <div>
+    <div style={{minHeight:'100vh',background:'#f5f7fa'}}>
       <Navbar />
-      <div style={{padding:20}}>
-        <h2>Comunidad</h2>
+      <div className="container" style={{paddingTop:32,paddingBottom:48}}>
+        <div className="fade-in">
+          <h1 style={{color:'#2c3e50',fontSize:32,margin:'0 0 8px 0',fontWeight:700}}>
+            👥 Mi Comunidad
+          </h1>
+          <p style={{color:'#7f8c8d',fontSize:16,margin:'0 0 32px 0'}}>
+            Miembros y solicitudes de ingreso
+          </p>
+        </div>
+        
         {community ? (
-          <div>
-            <div style={{background:'#f8f9fa',padding:16,borderRadius:8,marginBottom:20}}>
-              <h3 style={{margin:'0 0 8px 0'}}>{community.name}</h3>
-              <p style={{margin:'4px 0',color:'#666'}}>{community.description}</p>
-              <p style={{margin:'4px 0'}}><strong>Dirección:</strong> {community.address}</p>
-              {/* Debug info - can remove later */}
-              {profile && (profile.role === 'admin' || profile.role === 'superadmin') && (
-                <div style={{marginTop:8,padding:8,background:'#e3f2fd',borderRadius:4,fontSize:11}}>
-                  <strong>Info Admin:</strong> 
-                  {' '}Eres líder: {community.adminId === user?.uid ? 'Sí' : 'No'} |
-                  {' '}Estás en members: {community.members?.includes(user?.uid) ? 'Sí' : 'No'} |
-                  {' '}Community ID: {community.id}
+          <div className="fade-in">
+            <div className="card" style={{marginBottom:32,background:'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',color:'white',border:'none'}}>
+              <div style={{display:'flex',alignItems:'center',gap:16,marginBottom:16}}>
+                <div style={{fontSize:48}}>🏘️</div>
+                <div style={{flex:1}}>
+                  <h2 style={{margin:'0 0 8px 0',fontSize:26,fontWeight:700}}>{community.name}</h2>
+                  <p style={{margin:'0 0 12px 0',opacity:0.95,fontSize:15}}>{community.description}</p>
+                  <p style={{margin:0,opacity:0.9,fontSize:14}}>📍 {community.address}</p>
                 </div>
-              )}
-              <p style={{margin:'4px 0'}}><strong>Total miembros:</strong> {community.totalMembers || community.members?.length || 0}</p>
+              </div>
+              <div style={{padding:16,background:'rgba(255,255,255,0.15)',borderRadius:8,marginTop:16}}>
+                <div style={{fontSize:14,opacity:0.9,marginBottom:4}}>👥 Total de miembros</div>
+                <div style={{fontSize:28,fontWeight:'bold'}}>{community.totalMembers || community.members?.length || 0}</div>
+              </div>
             </div>
 
             {/* Members list */}
-            <h4>Miembros ({membersData.length})</h4>
-            <div style={{display:'grid',gap:8,marginBottom:20}}>
-              {membersData.map(m => (
-                <div key={m.id} style={{display:'flex',alignItems:'center',gap:12,padding:8,background:'#fff',border:'1px solid #ddd',borderRadius:4}}>
-                  <div style={{flex:1}}>
-                    <strong>{m.displayName || 'Sin nombre'}</strong>
-                    <span style={{color:'#666',marginLeft:8}}>{m.email}</span>
+            <div className="card" style={{marginBottom:32}}>
+              <h3 style={{margin:'0 0 20px 0',color:'#2c3e50',fontSize:20,fontWeight:700}}>
+                👥 Miembros ({membersData.length})
+              </h3>
+              <div style={{display:'grid',gap:12}}>
+                {membersData.map(m => (
+                  <div key={m.id} style={{display:'flex',alignItems:'center',gap:12,padding:16,background:'#f8f9fa',border:'1px solid #e1e8ed',borderRadius:8}}>
+                    <div style={{fontSize:32}}>👤</div>
+                    <div style={{flex:1}}>
+                      <div style={{fontWeight:700,color:'#2c3e50',fontSize:16}}>{m.displayName || 'Sin nombre'}</div>
+                      <div style={{color:'#7f8c8d',fontSize:14}}>{m.email}</div>
+                    </div>
+                    {m.apartment && <span style={{color:'#7f8c8d',fontSize:13,background:'white',padding:'4px 12px',borderRadius:20}}>🏠 {m.apartment}</span>}
+                    <span style={{padding:'6px 12px',background:m.role==='admin'?'linear-gradient(135deg, #667eea 0%, #764ba2 100%)':'linear-gradient(135deg, #11998e 0%, #38ef7d 100%)',color:'white',borderRadius:6,fontSize:13,fontWeight:600}}>
+                      {m.role === 'admin' ? '👨‍💼 Admin' : m.role === 'resident' ? '👤 Vecino' : m.role === 'superadmin' ? '👑 SuperAdmin' : '⏳ Pendiente'}
+                    </span>
                   </div>
-                  <span style={{padding:'2px 8px',background:m.role==='admin'?'#3498db':'#27ae60',color:'white',borderRadius:4,fontSize:12}}>
-                    {m.role === 'admin' ? 'Administrador' : m.role === 'resident' ? 'Vecino' : m.role === 'superadmin' ? 'Super Admin' : 'Pendiente'}
-                  </span>
-                  {m.apartment && <span style={{color:'#666',fontSize:12}}>Apt: {m.apartment}</span>}
-                </div>
-              ))}
+                ))}
+              </div>
             </div>
 
             {/* Pending requests - visible to admin and superadmin */}
             {profile && (profile.role === 'admin' || profile.role === 'superadmin') && (
-              <div style={{marginTop:24}}>
-                <div style={{display:'flex',alignItems:'center',gap:12,marginBottom:8}}>
-                  <h4 style={{margin:0}}>Solicitudes pendientes ({requests.length})</h4>
+              <div className="card">
+                <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:20}}>
+                  <h3 style={{margin:0,color:'#2c3e50',fontSize:20,fontWeight:700}}>
+                    ⏳ Solicitudes pendientes ({requests.length})
+                  </h3>
                   <button 
                     onClick={loadRequests}
                     disabled={loadingRequests}
-                    style={{padding:'4px 12px',fontSize:12,background:'#3498db',color:'white',border:'none',borderRadius:4,cursor:'pointer'}}
+                    style={{padding:'8px 16px',fontSize:13,background:'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',color:'white',fontWeight:600}}
                   >
-                    {loadingRequests ? 'Cargando...' : 'Refrescar'}
+                    {loadingRequests ? '⏳ Cargando...' : '🔄 Refrescar'}
                   </button>
                 </div>
                 {requests.length === 0 ? (
-                  <p style={{color:'#666'}}>No hay solicitudes pendientes.</p>
+                  <div style={{textAlign:'center',padding:40,background:'#f8f9fa',borderRadius:8}}>
+                    <div style={{fontSize:48,marginBottom:12}}>✅</div>
+                    <p style={{color:'#7f8c8d',margin:0}}>No hay solicitudes pendientes</p>
+                  </div>
                 ) : (
-                  <div style={{display:'grid',gap:8}}>
+                  <div style={{display:'grid',gap:12}}>
                     {requests.map(r => (
-                      <div key={r.id} style={{display:'flex',alignItems:'center',gap:12,padding:12,background:'#fff3cd',border:'1px solid #ffc107',borderRadius:4}}>
+                      <div key={r.id} style={{display:'flex',alignItems:'center',gap:12,padding:16,background:'#fffbf2',border:'2px solid #ed8936',borderRadius:8}}>
+                        <div style={{fontSize:32}}>👤</div>
                         <div style={{flex:1}}>
-                          <strong>{r.displayName || 'Sin nombre'}</strong>
-                          <span style={{color:'#666',marginLeft:8}}>{r.email}</span>
-                          {r.apartment && <span style={{color:'#666',marginLeft:8}}>Apt: {r.apartment}</span>}
+                          <div style={{fontWeight:700,color:'#2c3e50',fontSize:16}}>{r.displayName || 'Sin nombre'}</div>
+                          <div style={{color:'#7f8c8d',fontSize:14}}>{r.email}</div>
+                          {r.apartment && <div style={{color:'#7f8c8d',fontSize:13,marginTop:4}}>🏠 Apt: {r.apartment}</div>}
                         </div>
-                        <button 
-                          onClick={() => approveRequest(r.uid, r.id)}
-                          style={{padding:'6px 12px',background:'#27ae60',color:'white',border:'none',borderRadius:4,cursor:'pointer'}}
-                        >
-                          Aprobar
-                        </button>
-                        <button 
-                          onClick={() => rejectRequest(r.id)}
-                          style={{padding:'6px 12px',background:'#e74c3c',color:'white',border:'none',borderRadius:4,cursor:'pointer'}}
-                        >
-                          Rechazar
-                        </button>
+                        <div style={{display:'flex',gap:8}}>
+                          <button 
+                            onClick={() => approveRequest(r.uid, r.id)}
+                            style={{padding:'10px 18px',background:'linear-gradient(135deg, #11998e 0%, #38ef7d 100%)',color:'white',fontWeight:600}}
+                          >
+                            ✅ Aprobar
+                          </button>
+                          <button 
+                            onClick={() => rejectRequest(r.id)}
+                            style={{padding:'10px 18px',background:'linear-gradient(135deg, #eb3349 0%, #f45c43 100%)',color:'white',fontWeight:600}}
+                          >
+                            ❌ Rechazar
+                          </button>
+                        </div>
                       </div>
                     ))}
                   </div>
@@ -186,7 +206,10 @@ export default function CommunityPage(){
             )}
           </div>
         ) : (
-          <p>No hay comunidad asignada.</p>
+          <div className="card" style={{textAlign:'center',padding:60}}>
+            <div style={{fontSize:64,marginBottom:16}}>🏘️</div>
+            <p style={{color:'#7f8c8d',fontSize:18,margin:0}}>No hay comunidad asignada</p>
+          </div>
         )}
       </div>
     </div>

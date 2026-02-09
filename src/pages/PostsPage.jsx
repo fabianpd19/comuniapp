@@ -69,90 +69,118 @@ export default function PostsPage(){
   }
 
   return (
-    <div>
+    <div style={{minHeight:'100vh',background:'#f5f7fa'}}>
       <Navbar />
-      <div style={{padding:20,maxWidth:800,margin:'0 auto'}}>
-        <h2>Tablón de Avisos</h2>
+      <div className="container" style={{maxWidth:900,paddingTop:32,paddingBottom:48}}>
+        <div className="fade-in">
+          <h1 style={{color:'#2c3e50',fontSize:32,margin:'0 0 8px 0',fontWeight:700}}>
+            📢 Tablón de Avisos
+          </h1>
+          <p style={{color:'#7f8c8d',fontSize:16,margin:'0 0 32px 0'}}>
+            Mantén informada a tu comunidad
+          </p>
+        </div>
         
         {/* Formulario solo para admin */}
         {profile && profile.role === 'admin' && (
-          <form onSubmit={handleCreate} style={{background:'#f8f9fa',padding:16,borderRadius:8,marginBottom:24}}>
-            <h4 style={{margin:'0 0 12px 0'}}>Crear nuevo aviso</h4>
-            <div style={{display:'grid',gap:12}}>
-              <input 
-                placeholder="Título del aviso" 
-                value={title} 
-                onChange={e=>setTitle(e.target.value)} 
-                required
-                style={{padding:10,fontSize:16,border:'1px solid #ddd',borderRadius:4}}
-              />
-              <textarea 
-                placeholder="Contenido del aviso..." 
-                value={content} 
-                onChange={e=>setContent(e.target.value)}
-                rows={4}
-                style={{padding:10,fontSize:14,border:'1px solid #ddd',borderRadius:4}}
-              />
-              <div style={{display:'flex',gap:12}}>
-                <select value={category} onChange={e=>setCategory(e.target.value)} style={{padding:8,flex:1}}>
-                  <option value="general">📢 General</option>
-                  <option value="seguridad">🛡️ Seguridad</option>
-                  <option value="mantenimiento">🔧 Mantenimiento</option>
-                  <option value="eventos">🎉 Eventos</option>
-                </select>
-                <select value={priority} onChange={e=>setPriority(e.target.value)} style={{padding:8,flex:1}}>
-                  <option value="normal">Prioridad Normal</option>
-                  <option value="urgente">⚠️ Urgente</option>
-                </select>
+          <div className="card fade-in" style={{background:'linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%)',marginBottom:32,border:'2px solid #11998e'}}>
+            <h3 style={{margin:'0 0 20px 0',color:'#2c3e50',fontSize:20,fontWeight:700,display:'flex',alignItems:'center',gap:8}}>
+              <span>✍️</span><span>Crear nuevo aviso</span>
+            </h3>
+            <form onSubmit={handleCreate} style={{display:'flex',flexDirection:'column',gap:16}}>
+              <div>
+                <label style={{display:'block',marginBottom:8,color:'#2c3e50',fontWeight:600,fontSize:14}}>Título del aviso</label>
+                <input 
+                  placeholder="Ej: Reunión de vecinos este sábado" 
+                  value={title} 
+                  onChange={e=>setTitle(e.target.value)} 
+                  required
+                />
+              </div>
+              <div>
+                <label style={{display:'block',marginBottom:8,color:'#2c3e50',fontWeight:600,fontSize:14}}>Contenido</label>
+                <textarea 
+                  placeholder="Escribe los detalles del aviso..." 
+                  value={content} 
+                  onChange={e=>setContent(e.target.value)}
+                  rows={5}
+                  style={{resize:'vertical'}}
+                />
+              </div>
+              <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:16}}>
+                <div>
+                  <label style={{display:'block',marginBottom:8,color:'#2c3e50',fontWeight:600,fontSize:14}}>Categoría</label>
+                  <select value={category} onChange={e=>setCategory(e.target.value)}>
+                    <option value="general">📢 General</option>
+                    <option value="seguridad">🛡️ Seguridad</option>
+                    <option value="mantenimiento">🔧 Mantenimiento</option>
+                    <option value="eventos">🎉  Eventos</option>
+                  </select>
+                </div>
+                <div>
+                  <label style={{display:'block',marginBottom:8,color:'#2c3e50',fontWeight:600,fontSize:14}}>Prioridad</label>
+                  <select value={priority} onChange={e=>setPriority(e.target.value)}>
+                    <option value="normal">Normal</option>
+                    <option value="urgente">⚠️ Urgente</option>
+                  </select>
+                </div>
               </div>
               <button 
                 type="submit" 
                 disabled={creating}
-                style={{padding:12,background:'#27ae60',color:'white',border:'none',borderRadius:4,fontSize:16,cursor:'pointer'}}
+                style={{padding:'14px',background:'linear-gradient(135deg, #11998e 0%, #38ef7d 100%)',color:'white',fontSize:16,fontWeight:600}}
               >
-                {creating ? 'Publicando...' : 'Publicar aviso'}
+                {creating ? '⏳ Publicando...' : '📢 Publicar aviso'}
               </button>
-            </div>
-          </form>
+            </form>
+          </div>
         )}
 
         {/* Lista de avisos */}
-        <div>
+        <div className="fade-in">
           {posts.length === 0 ? (
-            <p style={{color:'#666',textAlign:'center',padding:40}}>No hay avisos publicados.</p>
+            <div className="card" style={{textAlign:'center',padding:60}}>
+              <div style={{fontSize:64,marginBottom:16}}>📢</div>
+              <p style={{color:'#7f8c8d',fontSize:18,margin:0}}>No hay avisos publicados</p>
+            </div>
           ) : (
-            posts.map(p=> (
-              <div 
-                key={p.id} 
-                style={{
-                  border: p.priority === 'urgente' ? '2px solid #e74c3c' : '1px solid #ddd',
-                  background: p.priority === 'urgente' ? '#fdf2f2' : 'white',
-                  padding:16,
-                  marginBottom:12,
-                  borderRadius:8
-                }}
-              >
-                <div style={{display:'flex',justifyContent:'space-between',alignItems:'flex-start'}}>
-                  <div>
-                    <span style={{fontSize:12,color:'#666'}}>{categoryLabels[p.category] || p.category}</span>
-                    {p.priority === 'urgente' && <span style={{marginLeft:8,background:'#e74c3c',color:'white',padding:'2px 8px',borderRadius:4,fontSize:11}}>URGENTE</span>}
-                  </div>
-                  {profile?.role === 'admin' && (
-                    <button 
-                      onClick={() => handleDelete(p.id)}
-                      style={{color:'#e74c3c',background:'none',border:'none',cursor:'pointer',fontSize:12}}
-                    >
-                      Eliminar
-                    </button>
+            <div style={{display:'grid',gap:16}}>
+              {posts.map(p=> (
+                <div 
+                  key={p.id} 
+                  className="card"
+                  style={{border: p.priority === 'urgente' ? '2px solid #e53e3e' : '1px solid #e1e8ed',background: p.priority === 'urgente' ? '#fff5f5' : 'white',position:'relative',overflow:'hidden'}}
+                >
+                  {p.priority === 'urgente' && (
+                    <div style={{position:'absolute',top:0,right:0,background:'linear-gradient(135deg, #eb3349 0%, #f45c43 100%)',color:'white',padding:'4px 16px',borderRadius:'0 0 0 8px',fontSize:11,fontWeight:'bold',letterSpacing:'0.5px'}}>
+                      ⚠️ URGENTE
+                    </div>
                   )}
+                  <div style={{display:'flex',justifyContent:'space-between',alignItems:'start',marginBottom:12}}>
+                    <span style={{fontSize:13,color:'#7f8c8d',fontWeight:600,background:'#f8f9fa',padding:'4px 12px',borderRadius:20}}>
+                      {categoryLabels[p.category] || p.category}
+                    </span>
+                    {profile?.role === 'admin' && (
+                      <button 
+                        onClick={() => handleDelete(p.id)}
+                        style={{color:'#e74c3c',background:'#fee',border:'1px solid #e74c3c',padding:'6px 12px',borderRadius:6,fontSize:12,fontWeight:600}}
+                      >
+                        🗑️ Eliminar
+                      </button>
+                    )}
+                  </div>
+                  <h3 style={{margin:'0 0 12px 0',color:'#2c3e50',fontSize:20,fontWeight:700}}>{p.title}</h3>
+                  {p.content && (
+                    <p style={{margin:'0 0 16px 0',color:'#495057',fontSize:15,lineHeight:1.6,whiteSpace:'pre-wrap'}}>{p.content}</p>
+                  )}
+                  <div style={{fontSize:13,color:'#adb5bd',paddingTop:12,borderTop:'1px solid #f1f3f5',display:'flex',alignItems:'center',gap:12}}>
+                    <span>👤 {p.createdByName || 'Admin'}</span>
+                    <span>•</span>
+                    <span>📅 {p.createdAt?.toDate ? p.createdAt.toDate().toLocaleDateString('es-ES',{day:'numeric',month:'long',year:'numeric'}) : 'Reciente'}</span>
+                  </div>
                 </div>
-                <h3 style={{margin:'8px 0'}}>{p.title}</h3>
-                <p style={{margin:'8px 0',color:'#333',whiteSpace:'pre-wrap'}}>{p.content}</p>
-                <div style={{fontSize:12,color:'#999',marginTop:12}}>
-                  Por {p.createdByName || 'Admin'} • {p.createdAt?.toDate ? p.createdAt.toDate().toLocaleDateString('es-ES') : 'Reciente'}
-                </div>
-              </div>
-            ))
+              ))}
+            </div>
           )}
         </div>
       </div>
