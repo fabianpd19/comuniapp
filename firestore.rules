@@ -1,0 +1,211 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Users collection - authenticated users can read/write their own doc
+    // Superadmin can read/write any user
+    // Admin can read any user (to display members) and update role when approving
+    match /users/{userId} {
+      allow read: if request.auth != null && (
+        request.auth.uid == userId 
+        || isSuperAdmin(request.auth.uid)
+        || isAnyAdmin(request.auth.uid)
+      );
+      allow write: if request.auth != null && (
+        request.auth.uid == userId 
+        || isSuperAdmin(request.auth.uid)
+        || (isAnyAdmin(request.auth.uid) && onlyRoleChange())
+      );
+    }
+
+    // Communities collection
+    match /communities/{communityId} {
+      // allow any authenticated user to read community metadata (keeps your original behavior)
+      allow read: if request.auth != null;
+      // only creator/admin may create (ensures adminId matches creator) or superadmin
+      allow create: if request.auth != null && (request.resource.data.adminId == request.auth.uid || isSuperAdmin(request.auth.uid));
+      // admin of community, any admin who is member, or superadmin can update/delete
+      allow update, delete: if request.auth != null && (
+        request.auth.uid == resource.data.adminId 
+        || isSuperAdmin(request.auth.uid)
+        || (isAnyAdmin(request.auth.uid) && request.auth.uid in resource.data.members)
+      );
+
+      // Membership requests subcollection
+      match /requests/{requestId} {
+        // Anyone authenticated can read their own request, admin of community, admin who is member, or superadmin
+        allow read: if request.auth != null && (
+          request.auth.uid == requestId 
+          || isAdminOfCommunityById(request.auth.uid, communityId) 
+          || isSuperAdmin(request.auth.uid)
+          || (isAnyAdmin(request.auth.uid) && isAdminMemberOfCommunity(request.auth.uid, communityId))
+        );
+        // User can create their own request (requestId == uid)
+        allow create: if request.auth != null && request.auth.uid == requestId;
+        // Admin of community, admin who is member, or superadmin can delete (approve/reject)
+        allow delete: if request.auth != null && (
+          isAdminOfCommunityById(request.auth.uid, communityId) 
+          || isSuperAdmin(request.auth.uid)
+          || (isAnyAdmin(request.auth.uid) && isAdminMemberOfCommunity(request.auth.uid, communityId))
+        );
+      }
+
+      // Notices subcollection (legacy in your rules)
+      match /notices/{noticeId} {
+        allow read: if request.auth != null;
+        allow create: if request.auth != null && request.resource.data.authorId == request.auth.uid;
+        allow update: if request.auth != null && request.auth.uid == resource.data.authorId;
+        allow delete: if request.auth != null && (request.auth.uid == resource.data.authorId || get(/databases/$(database)/documents/communities/$(communityId)).data.adminId == request.auth.uid);
+      }
+
+      // Alerts subcollection under community (legacy)
+      match /alerts/{alertId} {
+        allow read: if request.auth != null;
+        allow create: if request.auth != null && request.resource.data.userId == request.auth.uid;
+        allow update: if request.auth != null && (request.auth.uid == resource.data.userId || get(/databases/$(database)/documents/communities/$(communityId)).data.adminId == request.auth.uid);
+      }
+
+      // Notifications subcollection
+      match /notifications/{notificationId} {
+        allow read: if request.auth != null;
+        allow create: if request.auth != null;
+      }
+    }
+
+    // Top-level Posts collection (new)
+    match /posts/{postId} {
+      allow read: if request.auth != null && (isMember(request.auth.uid, resource.data.communityId) || isSuperAdmin(request.auth.uid));
+      allow create: if request.auth != null && (isAdminOfCommunity(request.auth.uid, request.resource.data.communityId) || isSuperAdmin(request.auth.uid))
+                    && validPost(request.resource.data);
+      allow update, delete: if request.auth != null && (isAdminOfCommunity(request.auth.uid, resource.data.communityId) || isSuperAdmin(request.auth.uid));
+    }
+
+    // Top-level Alerts collection (new)
+    match /alerts/{alertId} {
+      allow read: if request.auth != null && (isMember(request.auth.uid, resource.data.communityId) || isSuperAdmin(request.auth.uid));
+      allow create: if request.auth != null && (isAdminOfCommunity(request.auth.uid, request.resource.data.communityId) || isSuperAdmin(request.auth.uid))
+                    && request.resource.data.message is string
+                    && request.resource.data.level in ["alta","media"];
+      allow update, delete: if request.auth != null && (isAdminOfCommunity(request.auth.uid, resource.data.communityId) || isSuperAdmin(request.auth.uid));
+    }
+
+    // Surveys collection (new)
+    match /surveys/{surveyId} {
+      allow read: if request.auth != null && (isMember(request.auth.uid, resource.data.communityId) || isSuperAdmin(request.auth.uid));
+      allow create: if request.auth != null && (isAdminOfCommunity(request.auth.uid, request.resource.data.communityId) || isSuperAdmin(request.auth.uid))
+                    && request.resource.data.question is string
+                    && request.resource.data.options is list
+                    && request.resource.data.votes == {};
+
+      allow update: if request.auth != null && (
+        isAdminOfCommunity(request.auth.uid, resource.data.communityId)
+        || isSuperAdmin(request.auth.uid)
+        || (isMember(request.auth.uid, resource.data.communityId) && onlyVoteChangeForSelf(request.auth.uid))
+      );
+      allow delete: if request.auth != null && (isAdminOfCommunity(request.auth.uid, resource.data.communityId) || isSuperAdmin(request.auth.uid));
+    }
+
+    // Chats collection - one chat per community
+    match /chats/{chatId} {
+      allow read: if request.auth != null && isMember(request.auth.uid, resource.data.communityId);
+      allow create: if request.auth != null && (isAdminOfCommunity(request.auth.uid, request.resource.data.communityId) || isSuperAdmin(request.auth.uid));
+      allow update, delete: if request.auth != null && (isAdminOfCommunity(request.auth.uid, resource.data.communityId) || isSuperAdmin(request.auth.uid));
+    }
+
+    // Messages collection - chat messages
+    match /messages/{messageId} {
+      allow read: if request.auth != null && isMemberOfChat(request.auth.uid, resource.data.chatId);
+      allow create: if request.auth != null 
+                    && isMemberOfChat(request.auth.uid, request.resource.data.chatId)
+                    && request.resource.data.senderId == request.auth.uid
+                    && request.resource.data.message is string;
+      allow delete: if request.auth != null && (
+        request.auth.uid == resource.data.senderId
+        || isAdminOfChat(request.auth.uid, resource.data.chatId)
+        || isSuperAdmin(request.auth.uid)
+      );
+    }
+
+    // Emergencies collection - community emergencies
+    match /emergencies/{emergencyId} {
+      allow read: if request.auth != null && isMember(request.auth.uid, resource.data.communityId);
+      allow create: if request.auth != null && isMember(request.auth.uid, request.resource.data.communityId);
+      allow update: if request.auth != null && (
+        isAdminOfCommunity(request.auth.uid, resource.data.communityId) 
+        || isSuperAdmin(request.auth.uid)
+      );
+      allow delete: if request.auth != null && (isAdminOfCommunity(request.auth.uid, resource.data.communityId) || isSuperAdmin(request.auth.uid));
+    }
+
+    // Helper functions
+    function isSuperAdmin(uid) {
+      return exists(/databases/$(database)/documents/users/$(uid))
+        && get(/databases/$(database)/documents/users/$(uid)).data.role == 'superadmin';
+    }
+
+    function isAnyAdmin(uid) {
+      return exists(/databases/$(database)/documents/users/$(uid))
+        && get(/databases/$(database)/documents/users/$(uid)).data.role == 'admin';
+    }
+
+    function onlyRoleChange() {
+      // Admin can only change role field (and updatedAt) - not other profile fields
+      // Using diff to only check the fields that exist on both documents
+      return request.resource.data.diff(resource.data).affectedKeys().hasOnly(['role', 'updatedAt']);
+    }
+
+    function isMember(uid, communityId) {
+      return communityId != null
+        && exists(/databases/$(database)/documents/communities/$(communityId))
+        && uid in get(/databases/$(database)/documents/communities/$(communityId)).data.members;
+    }
+
+    function isAdminOfCommunity(uid, communityId) {
+      return communityId != null
+        && exists(/databases/$(database)/documents/communities/$(communityId))
+        && get(/databases/$(database)/documents/communities/$(communityId)).data.adminId == uid;
+    }
+
+    function isAdminOfCommunityById(uid, communityId) {
+      return exists(/databases/$(database)/documents/communities/$(communityId))
+        && get(/databases/$(database)/documents/communities/$(communityId)).data.adminId == uid;
+    }
+
+    function isAdminMemberOfCommunity(uid, communityId) {
+      return exists(/databases/$(database)/documents/communities/$(communityId))
+        && uid in get(/databases/$(database)/documents/communities/$(communityId)).data.members;
+    }
+
+    function isMemberOfChat(uid, chatId) {
+      return chatId != null
+        && exists(/databases/$(database)/documents/chats/$(chatId))
+        && isMember(uid, get(/databases/$(database)/documents/chats/$(chatId)).data.communityId);
+    }
+
+    function isAdminOfChat(uid, chatId) {
+      return chatId != null
+        && exists(/databases/$(database)/documents/chats/$(chatId))
+        && isAdminOfCommunity(uid, get(/databases/$(database)/documents/chats/$(chatId)).data.communityId);
+    }
+
+    function validPost(data) {
+      return data.title is string
+        && data.content is string
+        && data.category in ["seguridad","mantenimiento","eventos","general"]
+        && data.priority in ["normal","urgente"]
+        && data.communityId is string
+        && data.createdBy is string
+        && data.createdAt is timestamp;
+    }
+
+    function onlyVoteChangeForSelf(uid) {
+      // Simplified check: ensure immutable fields are unchanged and the requester provides a string vote for their own uid.
+      return request.resource.data.question == resource.data.question
+        && request.resource.data.options == resource.data.options
+        && request.resource.data.communityId == resource.data.communityId
+        && request.resource.data.active == resource.data.active
+        && request.resource.data.votes[uid] is string;
+    }
+
+  }
+}
