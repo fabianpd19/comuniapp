@@ -1,6 +1,5 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
-import Navbar from '../components/Navbar'
 import { useAuth } from '../context/AuthContext'
 
 export default function PlanesPage() {
@@ -57,7 +56,6 @@ export default function PlanesPage() {
 
   return (
     <div>
-      <Navbar />
       <div style={{ padding: 20, maxWidth: 900, margin: '0 auto' }}>
         {/* Header */}
         <div style={{ textAlign: 'center', marginBottom: 40 }}>

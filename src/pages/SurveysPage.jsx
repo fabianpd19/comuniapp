@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react'
-import Navbar from '../components/Navbar'
 import { useAuth } from '../context/AuthContext'
 import { collection, query, where, getDocs, addDoc, deleteDoc, doc, updateDoc, serverTimestamp } from 'firebase/firestore'
 import { db } from '../services/firebase'
@@ -98,7 +97,6 @@ export default function SurveysPage(){
 
   return (
     <div>
-      <Navbar />
       <div style={{padding:20,maxWidth:800,margin:'0 auto'}}>
         <h2>📊 Encuestas</h2>
         

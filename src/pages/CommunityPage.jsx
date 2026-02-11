@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react'
-import Navbar from '../components/Navbar'
 import { useAuth } from '../context/AuthContext'
 import { doc, getDoc, collection, getDocs, updateDoc, deleteDoc, setDoc, serverTimestamp } from 'firebase/firestore'
 import { db } from '../services/firebase'
@@ -104,7 +103,6 @@ export default function CommunityPage(){
 
   return (
     <div style={{minHeight:'100vh',background:'#f5f7fa'}}>
-      <Navbar />
       <div className="container" style={{paddingTop:32,paddingBottom:48}}>
         <div className="fade-in">
           <h1 style={{color:'#2c3e50',fontSize:32,margin:'0 0 8px 0',fontWeight:700}}>

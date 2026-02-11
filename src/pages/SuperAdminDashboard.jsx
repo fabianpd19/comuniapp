@@ -3,7 +3,6 @@ import { useNavigate, Link } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
 import { collection, getDocs, doc, updateDoc, deleteDoc, setDoc, addDoc, serverTimestamp, arrayUnion, arrayRemove } from 'firebase/firestore'
 import { db } from '../services/firebase'
-import Navbar from '../components/Navbar'
 
 export default function SuperAdminDashboard() {
   const { profile, logout } = useAuth()

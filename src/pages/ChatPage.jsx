@@ -1,5 +1,4 @@
 import React, { useEffect, useState, useRef } from 'react'
-import Navbar from '../components/Navbar'
 import { useAuth } from '../context/AuthContext'
 import { 
   collection, query, where, getDocs, addDoc, onSnapshot, 
@@ -126,7 +125,6 @@ export default function ChatPage() {
   if (loading) {
     return (
       <div>
-        <Navbar />
         <div style={{ padding: 20, textAlign: 'center' }}>Cargando chat...</div>
       </div>
     )
@@ -135,7 +133,6 @@ export default function ChatPage() {
   if (!chat) {
     return (
       <div>
-        <Navbar />
         <div style={{ padding: 20, textAlign: 'center' }}>
           <p>El chat de la comunidad aún no ha sido creado.</p>
           {isAdmin && (
@@ -153,7 +150,6 @@ export default function ChatPage() {
 
   return (
     <div style={{ height: '100vh', display: 'flex', flexDirection: 'column' }}>
-      <Navbar />
       
       {/* Header del chat */}
       <div style={{ 
