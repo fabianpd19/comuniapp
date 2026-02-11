@@ -45,7 +45,7 @@
 ### 1. Clonar repositorio
 
 ```bash
-git clone https://github.com/TU_USUARIO/comuniapp.git
+git clone https://github.com/fabianpd19/comuniapp.git
 cd comuniapp
 ```
 
