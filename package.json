@@ -6,12 +6,13 @@
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview",
-    "start": "serve dist -s -l tcp://0.0.0.0:${PORT:-3000}"
+    "start": "node server.js"
   },
   "dependencies": {
     "@emotion/react": "^11.11.0",
     "@emotion/styled": "^11.11.0",
     "@mui/material": "^5.14.0",
+    "express": "^4.22.1",
     "firebase": "^10.0.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
