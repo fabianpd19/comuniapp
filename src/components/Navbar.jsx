@@ -33,10 +33,22 @@ export default function Navbar() {
       <div style={{
         display: 'flex',
         alignItems: 'center',
-        gap: 8,
+        gap: 10,
         marginRight: 16
       }}>
-        <span style={{ fontSize: 24 }}>🏘️</span>
+        <img 
+          src="/logo.png" 
+          alt="ComuniApp" 
+          style={{
+            width: 36,
+            height: 36,
+            borderRadius: 8,
+            objectFit: 'contain',
+            background: 'rgba(255,255,255,0.15)',
+            padding: 2
+          }}
+          onError={(e) => { e.target.style.display = 'none' }}
+        />
         <strong style={{
           color: 'white',
           fontSize: 18,
